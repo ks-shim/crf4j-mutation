@@ -41,9 +41,13 @@ public abstract class FeatureIndex {
     protected List<List<Path>> pathList;
     protected List<List<Node>> nodeList;
 
-    public FeatureIndex() {
+    protected FeatureIndex() {
+        this(1);
+    }
+
+    protected FeatureIndex(int threadNum) {
         this.costFactor = 1.0;
-        this.threadNum = 1;
+        this.threadNum = threadNum;
 
         this.uniGramTemplates = new ArrayList<>();
         this.biGramTemplates = new ArrayList<>();
@@ -222,7 +226,20 @@ public abstract class FeatureIndex {
                 node.setX(cur);
                 node.setY(i);
                 node.setFeatureVector(featureIdList);
-                tagger.setNodeA
+                tagger.setNodeAt(node, cur, i);
+            }
+        }
+
+        // path
+        for(int cur=1; cur < tagger.inputColumnListSize(); cur++) {
+            List<Integer> featureIdList = tagger.getFeatureIdListAt(featureIdListIndex++);
+
+            for(int i=0; i<tagListSize; i++) {
+                for(int j=0; j<tagListSize; j++) {
+                    Path path = new Path();
+                    path.add(tagger.getNodeAt(cur-1, i), tagger.getNodeAt(cur, j));
+                    path.setFeatureVector(featureIdList);
+                }
             }
         }
     }

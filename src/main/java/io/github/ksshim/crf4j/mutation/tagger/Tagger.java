@@ -6,10 +6,12 @@ import io.github.ksshim.crf4j.mutation.lattice.Node;
 import io.github.ksshim.crf4j.mutation.lattice.Path;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -77,7 +79,22 @@ public abstract class Tagger {
 
         if(inputColumnsList.isEmpty()) return;
 
-        buildL
+        buildLattice();
+        viterbi();
+    }
+
+    public void clearNode() {
+        if(nodesList == null || nodesList.isEmpty()) return;
+
+        for(Node[] nodes : nodesList) {
+            for(int i=0; i<nodes.length; i++) {
+                if(nodes[i] == null) continue;
+
+                // free memory
+                nodes[i].clear();
+                nodes[i] = null;
+            }
+        }
     }
 
     public int inputColumnListSize() {
@@ -210,5 +227,35 @@ public abstract class Tagger {
     //
     //********************************************************************
     private void calculateNodeAndPathCost(Node node) {
+        featureIndex.calculateCost(node);
+
+        Iterator<Path> iter = node.leftPathIterator();
+        while(iter.hasNext()) {
+            Path path = iter.next();
+            featureIndex.calculateCost(path);
+        }
+    }
+
+    public void buildLattice() {
+        if(inputColumnsList.isEmpty()) return;
+
+        featureIndex.buildNodesAndPaths(this);
+
+        for(int i=0; i<inputColumnsList.size(); i++) {
+            for(int j=0; j<tagListSize; j++) {
+                calculateNodeAndPathCost(nodesList.get(i)[j]);
+            }
+        }
+    }
+
+    public String asTestResultString() {
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<inputColumnsList.size(); i++) {
+            sb.append(StringUtils.join(inputColumnsList.get(i), '\t'));
+            sb.append('\t').append(getTagAt(getResultAt(i)));
+            sb.append('\n');
+        }
+
+        return sb.toString();
     }
 }
