@@ -56,10 +56,37 @@ public class Node {
     }
 
     public void calcAlpha() {
-        this.alpha = 0.0;
+        alpha = 0.0;
         for(Path p : leftPathList) {
-            this.alpha = LSE.logSumExp(alpha, p.get)
+            alpha = LSE.logSumExp(alpha, p.getCost() + p.getLNodeAlpha(), p == leftPathList.get(0));
         }
+        alpha += cost;
+    }
+
+    public void calcBeta() {
+        beta = 0.0;
+        for(Path p : rightPathList) {
+            beta = LSE.logSumExp(beta, p.getCost() + p.getRNodeBeta(), p == rightPathList.get(0));
+        }
+        beta += cost;
+    }
+
+    public void calculateExpectation(double[] expected,
+                                     double z,
+                                     int size) {
+        double c = Math.exp(alpha + beta - cost - z);
+        for(int i=0; featureVector.get(i) != -1; i++) {
+            int idx = featureVector.get(i) + y;
+            expected[idx] += c;
+        }
+
+        for(Path p : leftPathList) {
+            p.calculateExpectation(expected, z, size);
+        }
+    }
+
+    public void incrementCost(double incrementalCost) {
+        cost += incrementalCost;
     }
 
     public void clear() {

@@ -1,7 +1,10 @@
 package io.github.ksshim.crf4j.mutation.lattice;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class Path {
 
     private Node rNode;
@@ -19,6 +22,14 @@ public class Path {
 
     public double getRNodeBestCost() {
         return rNode.getBestCost();
+    }
+
+    public double getLNodeAlpha() {
+        return lNode.getAlpha();
+    }
+
+    public double getRNodeBeta() {
+        return rNode.getBeta();
     }
 
     public int getLNodeX() {
