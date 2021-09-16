@@ -1,6 +1,6 @@
 package io.github.ksshim.crf4j.mutation.feature;
 
-import io.github.ksshim.crf4j.mutation.constants.TemplateConstants;
+import io.github.ksshim.crf4j.mutation.constants.CommonConstants;
 import io.github.ksshim.crf4j.mutation.tagger.EncodeTagger;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
@@ -13,11 +13,11 @@ import java.util.*;
 
 @Log4j2
 @Data
-public class EncoderFeatureIndex extends FeatureIndex {
+public class EncodeFeatureIndex extends FeatureIndex {
 
     private Map<String, Pair<Integer, Integer>> dic;
 
-    public EncoderFeatureIndex(int n) {
+    public EncodeFeatureIndex(int n) {
         super(n);
         this.dic = new HashMap<>();
     }
@@ -36,7 +36,7 @@ public class EncoderFeatureIndex extends FeatureIndex {
         if(!dic.containsKey(key)) {
             dic.put(key, Pair.of(maxId, 1));
             int n = maxId;
-            maxId += (key.charAt(0) == TemplateConstants.UNI_GRAM ?
+            maxId += (key.charAt(0) == CommonConstants.TEMPLATE_UNI_GRAM ?
                     tagList.size() : tagList.size() * tagList.size());
             return n;
         } else {
@@ -61,9 +61,9 @@ public class EncoderFeatureIndex extends FeatureIndex {
                 char firstChar = line.charAt(0);
                 if(firstChar == ' ' || firstChar == '#') continue;
 
-                if(firstChar == TemplateConstants.UNI_GRAM) {
+                if(firstChar == CommonConstants.TEMPLATE_UNI_GRAM) {
                     uniGramTemplates.add(line);
-                } else if(firstChar == TemplateConstants.BI_GRAM) {
+                } else if(firstChar == CommonConstants.TEMPLATE_BI_GRAM) {
                     biGramTemplates.add(line);
                 } else {
                     log.error("Unknown type : {}", line);
@@ -119,5 +119,35 @@ public class EncoderFeatureIndex extends FeatureIndex {
     public void shrinkFeatureBy(int minFrequency,
                                 List<EncodeTagger> taggerList) {
 
+        if(minFrequency <= 1) return;
+
+        int newMaxId = 0;
+        Map<Integer, Integer> oldId2NewIdMap = new HashMap<>();
+        Map<String, Pair<Integer, Integer>> newDic = new HashMap<>();
+
+        List<String> sortedKeyList = new ArrayList<>(dic.keySet());
+        Collections.sort(sortedKeyList);
+
+        // 1. assign new feature ids
+        for(String key : sortedKeyList) {
+            Pair<Integer, Integer> featureFreq = dic.get(key);
+            int freq = featureFreq.getValue();
+            if(freq < minFrequency) continue;
+
+            int oldId = featureFreq.getKey();
+            oldId2NewIdMap.put(oldId, newMaxId);
+            newDic.put(key, Pair.of(newMaxId, freq));
+            newMaxId += (key.charAt(0) == CommonConstants.TEMPLATE_UNI_GRAM ? tagList.size() : tagList.size() * tagList.size());
+        }
+
+        // 2. update feature cache
+        for(EncodeTagger tagger : taggerList) {
+            tagger.updateFeatureCache(oldId2NewIdMap);
+        }
+
+        // 3. change value and reference
+        this.maxId = newMaxId;
+        this.dic.clear();
+        this.dic = newDic;
     }
 }
