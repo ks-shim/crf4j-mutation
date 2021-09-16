@@ -118,12 +118,14 @@ public abstract class FeatureIndex {
 
         StringBuilder sb = new StringBuilder();
         // 1. unigram
-        for(String temp : uniGramTemplates)
+        for(String temp : uniGramTemplates) {
             sb.append(temp).append('\n');
+        }
 
         // 2. bigram
-        for(String temp : biGramTemplates)
+        for(String temp : biGramTemplates) {
             sb.append(temp).append('\n');
+        }
 
         return sb.toString();
     }
