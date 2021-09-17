@@ -75,7 +75,7 @@ public class CRFTrainer {
 
         // 6. start training
         log.info("Start training ...");
-        double[] alpha = featureIndex.getAlpha();
+        double[] alpha = featureIndex.initAlpha();
         train(taggerList, featureIndex, alpha, algorithm == Algorithm.CRF_L1);
         log.info("End training ...");
 
