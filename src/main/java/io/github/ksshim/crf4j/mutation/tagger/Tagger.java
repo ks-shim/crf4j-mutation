@@ -109,7 +109,7 @@ public abstract class Tagger {
         nodesList.get(i)[j] = n;
     }
 
-    public boolean empty() {
+    public boolean isEmpty() {
         return inputColumnsList.isEmpty();
     }
 
