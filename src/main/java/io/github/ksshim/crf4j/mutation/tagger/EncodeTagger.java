@@ -5,10 +5,7 @@ import io.github.ksshim.crf4j.mutation.lattice.Path;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Log4j2
 @Data
@@ -19,7 +16,7 @@ public class EncodeTagger extends Tagger {
 
     public EncodeTagger() {
         super();
-        this.answerTagIndexList = new ArrayList<>();
+        this.answerTagIndexList = new LinkedList<>();
     }
 
     public int eval() {
@@ -101,7 +98,7 @@ public class EncodeTagger extends Tagger {
     public void updateFeatureCache(Map<Integer, Integer> oldId2NewIdMap) {
         for(int i=0; i<featureIdListCache.size(); i++) {
             List<Integer> featureCacheItemList = featureIdListCache.get(i);
-            List<Integer> newCacheList = new ArrayList<>();
+            List<Integer> newCacheList = new LinkedList<>();
 
             for(Integer it : featureCacheItemList) {
                 if(!oldId2NewIdMap.containsKey(it)) continue;

@@ -10,10 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Log4j2
 @Data
@@ -33,10 +30,10 @@ public abstract class Tagger {
     protected List<List<Integer>> featureIdListCache;
 
     public Tagger() {
-        this.inputColumnsList = new ArrayList<>();
-        this.nodesList = new ArrayList<>();
-        this.resultList = new ArrayList<>();
-        this.featureIdListCache = new ArrayList<>();
+        this.inputColumnsList = new LinkedList<>();
+        this.nodesList = new LinkedList<>();
+        this.resultList = new LinkedList<>();
+        this.featureIdListCache = new LinkedList<>();
     }
 
     public Tagger open(FeatureIndex featureIndex) {

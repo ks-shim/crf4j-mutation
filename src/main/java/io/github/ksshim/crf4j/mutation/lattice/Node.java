@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 @Data
@@ -24,8 +25,8 @@ public class Node {
     private List<Path> rightPathList;
 
     public Node() {
-        this.leftPathList = new ArrayList<>();
-        this.rightPathList = new ArrayList<>();
+        this.leftPathList = new LinkedList<>();
+        this.rightPathList = new LinkedList<>();
     }
 
     public Iterator<Path> leftPathIterator() {

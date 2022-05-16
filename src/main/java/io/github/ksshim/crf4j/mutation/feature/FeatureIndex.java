@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 @Log4j2
@@ -49,9 +50,9 @@ public abstract class FeatureIndex {
         this.costFactor = 1.0;
         this.threadNum = threadNum;
 
-        this.uniGramTemplates = new ArrayList<>();
-        this.biGramTemplates = new ArrayList<>();
-        this.tagList = new ArrayList<>();
+        this.uniGramTemplates = new LinkedList<>();
+        this.biGramTemplates = new LinkedList<>();
+        this.tagList = new LinkedList<>();
     }
 
     protected abstract int getID(String s);
@@ -205,7 +206,7 @@ public abstract class FeatureIndex {
                                int startIndex,
                                List<String> templates) {
         for(int cur = startIndex; cur < tagger.inputColumnListSize(); cur++) {
-            List<Integer> featureIdList = new ArrayList<>();
+            List<Integer> featureIdList = new LinkedList<>();
             //build feature from template
             buildFeatureFromTemplate(featureIdList, templates, cur, tagger);
 

@@ -23,7 +23,7 @@ public class EncodeFeatureIndex extends FeatureIndex {
     }
 
     public List<Pair<String, Integer>> getDicAsPairList() {
-        List<Pair<String, Integer>> pairList = new ArrayList<>();
+        List<Pair<String, Integer>> pairList = new LinkedList<>();
         for(String key : dic.keySet()) {
             pairList.add(Pair.of(key, dic.get(key).getKey()));
         }
@@ -125,7 +125,7 @@ public class EncodeFeatureIndex extends FeatureIndex {
         Map<Integer, Integer> oldId2NewIdMap = new HashMap<>();
         Map<String, Pair<Integer, Integer>> newDic = new HashMap<>();
 
-        List<String> sortedKeyList = new ArrayList<>(dic.keySet());
+        List<String> sortedKeyList = new LinkedList<>(dic.keySet());
         Collections.sort(sortedKeyList);
 
         // 1. assign new feature ids

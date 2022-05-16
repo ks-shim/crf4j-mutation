@@ -16,6 +16,7 @@ import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -59,7 +60,7 @@ public class CRFTrainer {
 
         // 3. read train data and create taggers.
         log.info("Start reading train data and creating taggers ...");
-        List<EncodeTagger> taggerList = new ArrayList<>(2000000);
+        List<EncodeTagger> taggerList = new LinkedList<>();
         readTrainData(inTrainFilePath, featureIndex, taggerList);
         log.info("End reading train data and creating taggers ...");
 
@@ -136,6 +137,18 @@ public class CRFTrainer {
         }
     }
 
+    private int doL1Regulation(int size,
+                               double[] alpha,
+                               CRFTrainingThread firstThread) {
+        int numNonZero = 0;
+        for(int i=0; i<size; i++) {
+            firstThread.incrementsObj(Math.abs(alpha[i] / cost));
+            if(alpha[i] == 0.0) continue;
+            numNonZero++;
+        }
+        return numNonZero;
+    }
+
     private void train(FeatureIndex featureIndex,
                        List<CRFTrainingThread> threads,
                        ExecutorService executor,
@@ -184,18 +197,6 @@ public class CRFTrainer {
                 firstThread.getExpected(), orthant, cost) <= 0) throw new OptimizationException();
     }
 
-    private int doL1Regulation(int size,
-                               double[] alpha,
-                               CRFTrainingThread firstThread) {
-        int numNonZero = 0;
-        for(int i=0; i<size; i++) {
-            firstThread.incrementsObj(Math.abs(alpha[i] / cost));
-            if(alpha[i] == 0.0) continue;
-            numNonZero++;
-        }
-        return numNonZero;
-    }
-
     private int doL2Regulation(int size,
                                double[] alpha,
                                CRFTrainingThread firstThread) {
@@ -209,7 +210,7 @@ public class CRFTrainer {
 
     private List<CRFTrainingThread> buildThreads(int alphaLength,
                                                  List<EncodeTagger> taggerList) {
-        List<CRFTrainingThread> threads = new ArrayList<>();
+        List<CRFTrainingThread> threads = new LinkedList<>();
 
         for(int i=0; i<nThreads; i++) {
             threads.add(
