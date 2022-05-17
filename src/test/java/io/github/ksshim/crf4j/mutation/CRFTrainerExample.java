@@ -10,11 +10,12 @@ public class CRFTrainerExample {
         CRFTrainer trainer =
                 new CRFTrainer.CRFTrainerBuilder()
                         .algorithm(Algorithm.CRF_L2)
-                        .inTemplateFilePath("data/seg/template")
-                        .inTrainFilePath("data/seg/train.data")
-                        .outModelFilePath("data/seg/out.model")
-                        .nThreads(3)
+                        .inTemplateFilePath("data/spacing/template")
+                        .inTrainFilePath("data/spacing/train.data")
+                        .outModelFilePath("data/spacing/out.model")
+                        .nThreads(6)
                         .minFrequency(1)
+                        .eta(0.005f)
                         .build();
 
         trainer.train();

@@ -13,7 +13,7 @@ public class CRFModelExample {
 
     public static void main(String[] args) throws Exception {
 
-        Model model = new Model("data/seg/out.model");
+        Model model = new Model("data/spacing/out.model");
         Tagger tagger = model.createTagger();
 
         InputFormatter inputFormatter = new InputFormatter() {
@@ -28,11 +28,11 @@ public class CRFModelExample {
             }
         };
 
-        List<String> labelList = model.doLabel("ダーにな", tagger, inputFormatter);
+        List<String> labelList = model.doLabel("나이키신발", tagger, inputFormatter);
         log.info("Result : {}", labelList);
         tagger.clear();
 
-        labelList = model.doLabel("ダーにな", tagger, inputFormatter);
+        labelList = model.doLabel("나이키슈즈", tagger, inputFormatter);
         log.info("Result : {}", labelList);
     }
 }
