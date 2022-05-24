@@ -19,11 +19,8 @@ public class CRFModelExample {
         InputFormatter inputFormatter = new InputFormatter() {
             @Override
             public void format(String input, Tagger tagger) {
-                StringBuilder sb = new StringBuilder();
                 for(int i=0; i<input.length(); i++) {
-                    sb.setLength(0);
-                    sb.append(input.charAt(i));
-                    tagger.add(sb.toString());
+                    tagger.add(String.valueOf(input.charAt(i)));
                 }
             }
         };
@@ -32,7 +29,7 @@ public class CRFModelExample {
         log.info("Result : {}", labelList);
         tagger.clear();
 
-        labelList = model.doLabel("나이키슈즈", tagger, inputFormatter);
+        labelList = model.doLabel("간절기남성가디건여성", tagger, inputFormatter);
         log.info("Result : {}", labelList);
     }
 }
